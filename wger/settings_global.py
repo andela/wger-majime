@@ -18,6 +18,7 @@ import re
 import sys
 from config import *
 
+
 '''
 This file contains the global settings that don't usually need to be changed.
 For a full list of options, visit:
@@ -26,6 +27,7 @@ For a full list of options, visit:
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 
@@ -35,6 +37,9 @@ SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 SITE_ID = 1
 ROOT_URLCONF = 'wger.urls'
 WSGI_APPLICATION = 'wger.wsgi.application'
+
+
+
 
 INSTALLED_APPS = (
     'django.contrib.auth',
