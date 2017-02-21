@@ -11,10 +11,14 @@
 <form action="{% url 'core:user:login' %}{% if next %}?next={{next}}{% endif %}"
       method="post"
       class="form-horizontal">
+
     {% trans 'Login' as submit_text %}
     {% render_form_fields form submit_text %}
+  <p align = "right">
     <a href="{% url 'social:begin' 'facebook' %}?next={{next}}" class="btn btn-sm btn-social btn-facebook"><span class="fa fa-facebook"></span> Login with Facebook</a>
-    <a href="{% url 'social:begin' 'twitter' %}?next={{next}}" class="btn btn-sm btn-social btn-twitter"><span class="fa fa-twitter"></span>Login with Twitter</a>
+    <a href="{% url 'social:begin' 'twitter' %}?next={{next}}" class="btn btn-sm btn-social btn-twitter"><span class="fa fa-twitter"></span> Login with Twitter</a>
+    <a href="{% url 'social:begin' 'google-oauth2' %}?next={{next}}" class="btn btn-sm btn-social btn-google"><span class="fa fa-google"></span> Login with Google</a>
+  </p>
 </form>
 {% endblock %}
 

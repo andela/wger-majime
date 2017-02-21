@@ -9,6 +9,7 @@ django-bootstrap-breadcrumbs==0.8.2
 django-bower==5.2.0
 django-compressor==2.1.1
 django-cors-headers==2.0.2
+django-envie==0.0.9
 django-filter==1.0.1
 django-formtools==1.0
 django-mobile==0.7.0
@@ -20,11 +21,13 @@ docutils==0.13.1
 easy-thumbnails==2.3
 future==0.16.0
 html5lib==0.9999999
+httplib2==0.10.3
 icalendar==3.11.2
 imagesize==0.7.1
 invoke==0.14.0
 Jinja2==2.9.5
 MarkupSafe==0.23
+oauth2==1.9.0.post1
 oauthlib==2.0.1
 olefile==0.44
 packaging==16.8
@@ -39,6 +42,7 @@ python-mimeparse==1.6.0
 python-social-auth==0.3.6
 python3-openid==3.0.10
 pytz==2016.10
+PyYAML==3.12
 rcssmin==1.0.6
 reportlab==3.3.0
 requests==2.13.0

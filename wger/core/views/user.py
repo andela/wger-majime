@@ -73,6 +73,7 @@ def login(request):
     Small wrapper around the django login view
     '''
 
+
     context = {'active_tab': USER_TAB}
     if request.GET.get('next'):
         context['next'] = request.GET.get('next')
