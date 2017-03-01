@@ -326,14 +326,9 @@ class ScheduleStep(models.Model):
 
     duration = models.IntegerField(verbose_name=_('Duration'),
                                    help_text=_('The duration in weeks'),
-<<<<<<< HEAD
                                    default=4,
-                                   validators=[MinValueValidator(1), MaxValueValidator(25)])
-=======
-                                   default=1,
                                    validators=[MinValueValidator(1), MaxValueValidator(52)])
 
->>>>>>> [#139473475] Add Choice fields for Cycles
     '''The duration in weeks'''
 
     order = models.IntegerField(verbose_name=_('Order'),
