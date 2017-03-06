@@ -17,7 +17,11 @@
 from django.core.management.base import BaseCommand
 
 from wger.core.models import RepetitionUnit
-from wger.exercises.models import (ExerciseCategory, Muscle, Equipment)
+from wger.exercises.models import (
+    ExerciseCategory,
+    Muscle,
+    Equipment
+)
 
 
 class Command(BaseCommand):
@@ -25,8 +29,7 @@ class Command(BaseCommand):
     Helper command to read out the strings to manually include in the .po files
     '''
 
-    help = 'Read out all strings that have\
-     to be included manually in the .po file'
+    help = 'Read out all strings that have to be included manually in the .po file'
 
     def handle(self, **options):
 
@@ -39,4 +42,5 @@ class Command(BaseCommand):
 
         # Print the result
         for i in out:
-            self.stdout.write('msgid "{0}"\n' 'msgstr ""\n\n'.format(i))
+            self.stdout.write('msgid "{0}"\n'
+                              'msgstr ""\n\n'.format(i))

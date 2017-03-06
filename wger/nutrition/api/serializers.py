@@ -16,8 +16,14 @@
 # along with Workout Manager.  If not, see <http://www.gnu.org/licenses/>.
 
 from rest_framework import serializers
-from wger.nutrition.models import (NutritionPlan, IngredientWeightUnit,
-                                   WeightUnit, MealItem, Meal, Ingredient)
+from wger.nutrition.models import (
+    NutritionPlan,
+    IngredientWeightUnit,
+    WeightUnit,
+    MealItem,
+    Meal,
+    Ingredient
+)
 
 
 class NutritionPlanSerializer(serializers.ModelSerializer):
@@ -27,7 +33,7 @@ class NutritionPlanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = NutritionPlan
-        exclude = ('user', )
+        exclude = ('user',)
 
 
 class IngredientWeightUnitSerializer(serializers.ModelSerializer):
@@ -52,8 +58,8 @@ class MealItemSerializer(serializers.ModelSerializer):
     '''
     MealItem serializer
     '''
-    meal = serializers.PrimaryKeyRelatedField(
-        label='Nutrition plan', queryset=Meal.objects.all())
+    meal = serializers.PrimaryKeyRelatedField(label='Nutrition plan',
+                                              queryset=Meal.objects.all())
 
     class Meta:
         model = MealItem
@@ -63,8 +69,8 @@ class MealSerializer(serializers.ModelSerializer):
     '''
     Meal serializer
     '''
-    plan = serializers.PrimaryKeyRelatedField(
-        label='Nutrition plan', queryset=NutritionPlan.objects.all())
+    plan = serializers.PrimaryKeyRelatedField(label='Nutrition plan',
+                                              queryset=NutritionPlan.objects.all())
 
     class Meta:
         model = Meal

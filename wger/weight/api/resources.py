@@ -37,4 +37,6 @@ class WeightEntryResource(ModelResource):
         queryset = WeightEntry.objects.all()
         authentication = ApiKeyAuthentication()
         authorization = UserObjectsOnlyAuthorization()
-        filtering = {'id': ALL, 'date': ALL, 'weight': ALL}
+        filtering = {'id': ALL,
+                     'date': ALL,
+                     'weight': ALL}

@@ -20,19 +20,27 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.core import mail
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.core.cache import cache
-from django.contrib.auth.mixins import PermissionRequiredMixin, \
-    LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.contrib.auth.decorators import permission_required
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy, ugettext as _
-from django.views.generic import (DeleteView, CreateView, UpdateView, ListView)
+from django.views.generic import (
+    DeleteView,
+    CreateView,
+    UpdateView,
+    ListView
+)
 
 from wger.nutrition.forms import UnitChooserForm
 from wger.nutrition.models import Ingredient
-from wger.utils.generic_views import (WgerFormMixin, WgerDeleteMixin)
+from wger.utils.generic_views import (
+    WgerFormMixin,
+    WgerDeleteMixin
+)
 from wger.utils.constants import PAGINATION_OBJECTS_PER_PAGE
 from wger.utils.language import load_language, load_ingredient_languages
 from wger.utils.cache import cache_mapper
+
 
 logger = logging.getLogger(__name__)
 
@@ -52,14 +60,14 @@ class IngredientListView(ListView):
     def get_queryset(self):
         '''
         Filter the ingredients the user will see by its language
-        (the user can also want to see ingredients in English,
-         in addition to his
+
+        (the user can also want to see ingredients in English, in addition to his
         native language, see load_ingredient_languages)
         '''
         languages = load_ingredient_languages(self.request)
         return (Ingredient.objects.filter(language__in=languages)
-                .filter(status__in=Ingredient.INGREDIENT_STATUS_OK)
-                .only('id', 'name'))
+                                  .filter(status__in=Ingredient.INGREDIENT_STATUS_OK)
+                                  .only('id', 'name'))
 
     def get_context_data(self, **kwargs):
         '''
@@ -78,24 +86,31 @@ def view(request, id, slug=None):
         ingredient = get_object_or_404(Ingredient, pk=id)
         cache.set(cache_mapper.get_ingredient_key(ingredient), ingredient)
     template_data['ingredient'] = ingredient
-    template_data['form'] = UnitChooserForm(
-        data={'ingredient_id': ingredient.id,
-              'amount': 100,
-              'unit': None})
+    template_data['form'] = UnitChooserForm(data={'ingredient_id': ingredient.id,
+                                                  'amount': 100,
+                                                  'unit': None})
     template_data['show_shariff'] = True
 
     return render(request, 'ingredient/view.html', template_data)
 
 
-class IngredientDeleteView(WgerDeleteMixin, LoginRequiredMixin,
-                           PermissionRequiredMixin, DeleteView):
+class IngredientDeleteView(WgerDeleteMixin,
+                           LoginRequiredMixin,
+                           PermissionRequiredMixin,
+                           DeleteView):
     '''
     Generic view to delete an existing ingredient
     '''
 
     model = Ingredient
-    fields = ('name', 'energy', 'protein', 'carbohydrates',
-              'carbohydrates_sugar', 'fat', 'fat_saturated', 'fibres',
+    fields = ('name',
+              'energy',
+              'protein',
+              'carbohydrates',
+              'carbohydrates_sugar',
+              'fat',
+              'fat_saturated',
+              'fibres',
               'sodium')
     template_name = 'delete.html'
     success_url = reverse_lazy('nutrition:ingredient:list')
@@ -107,8 +122,8 @@ class IngredientDeleteView(WgerDeleteMixin, LoginRequiredMixin,
         context = super(IngredientDeleteView, self).get_context_data(**kwargs)
 
         context['title'] = _(u'Delete {0}?').format(self.object)
-        context['form_action'] = reverse(
-            'nutrition:ingredient:delete', kwargs={'pk': self.object.id})
+        context['form_action'] = reverse('nutrition:ingredient:delete',
+                                         kwargs={'pk': self.object.id})
 
         return context
 
@@ -118,14 +133,20 @@ class IngredientMixin(WgerFormMixin):
     Manually set the order of the fields
     '''
 
-    fields = [
-        'name', 'energy', 'protein', 'carbohydrates', 'carbohydrates_sugar',
-        'fat', 'fat_saturated', 'fibres', 'sodium', 'license', 'license_author'
-    ]
+    fields = ['name',
+              'energy',
+              'protein',
+              'carbohydrates',
+              'carbohydrates_sugar',
+              'fat',
+              'fat_saturated',
+              'fibres',
+              'sodium',
+              'license',
+              'license_author']
 
 
-class IngredientEditView(IngredientMixin, LoginRequiredMixin,
-                         PermissionRequiredMixin, UpdateView):
+class IngredientEditView(IngredientMixin, LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     '''
     Generic view to update an existing ingredient
     '''
@@ -161,9 +182,11 @@ class IngredientCreateView(IngredientMixin, CreateView):
             form.instance.status = Ingredient.INGREDIENT_STATUS_ADMIN
         else:
             subject = _('New user submitted ingredient')
-            message = _(u'''The user {0} submitted a new ingredient "{1}".'''.
-                        format(self.request.user.username, form.instance.name))
-            mail.mail_admins(subject, message, fail_silently=True)
+            message = _(u'''The user {0} submitted a new ingredient "{1}".'''.format(
+                        self.request.user.username, form.instance.name))
+            mail.mail_admins(subject,
+                             message,
+                             fail_silently=True)
 
         form.instance.language = load_language()
         return super(IngredientCreateView, self).form_valid(form)
@@ -174,12 +197,10 @@ class IngredientCreateView(IngredientMixin, CreateView):
         '''
         if request.user.userprofile.is_temporary:
             return HttpResponseForbidden()
-        return super(IngredientCreateView, self).dispatch(request, *args,
-                                                          **kwargs)
+        return super(IngredientCreateView, self).dispatch(request, *args, **kwargs)
 
 
-class PendingIngredientListView(LoginRequiredMixin, PermissionRequiredMixin,
-                                ListView):
+class PendingIngredientListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     '''
     List all ingredients pending review
     '''
@@ -193,8 +214,7 @@ class PendingIngredientListView(LoginRequiredMixin, PermissionRequiredMixin,
         '''
         Only show ingredients pending review
         '''
-        return Ingredient.objects.filter(
-            status=Ingredient.INGREDIENT_STATUS_PENDING) \
+        return Ingredient.objects.filter(status=Ingredient.INGREDIENT_STATUS_PENDING) \
             .order_by('-creation_date')
 
 
@@ -207,9 +227,7 @@ def accept(request, pk):
     ingredient.status = Ingredient.INGREDIENT_STATUS_ACCEPTED
     ingredient.save()
     ingredient.send_email(request)
-    messages.success(
-        request,
-        _('Ingredient was successfully added to the general database'))
+    messages.success(request, _('Ingredient was successfully added to the general database'))
 
     return HttpResponseRedirect(ingredient.get_absolute_url())
 
@@ -222,6 +240,5 @@ def decline(request, pk):
     ingredient = get_object_or_404(Ingredient, pk=pk)
     ingredient.status = Ingredient.INGREDIENT_STATUS_DECLINED
     ingredient.save()
-    messages.success(request,
-                     _('Ingredient was successfully marked as rejected'))
+    messages.success(request, _('Ingredient was successfully marked as rejected'))
     return HttpResponseRedirect(ingredient.get_absolute_url())

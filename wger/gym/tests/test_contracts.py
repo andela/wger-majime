@@ -17,7 +17,8 @@ from django.core.urlresolvers import reverse
 from wger.core.tests.base_testcase import (
     WorkoutManagerAccessTestCase,
     WorkoutManagerEditTestCase,
-    WorkoutManagerAddTestCase, )
+    WorkoutManagerAddTestCase,
+)
 from wger.gym.models import Contract
 
 
@@ -28,10 +29,20 @@ class AddContractTestCase(WorkoutManagerAddTestCase):
 
     object_class = Contract
     url = reverse('gym:contract:add', kwargs={'user_pk': 14})
-    data = {'amount': 30, 'payment': '2'}
-    user_success = ('manager1', 'manager2')
-    user_fail = ('admin', 'general_manager1', 'manager3', 'manager4', 'test',
-                 'member1', 'member2', 'member3', 'member4', 'member5')
+    data = {'amount': 30,
+            'payment': '2'}
+    user_success = ('manager1',
+                    'manager2')
+    user_fail = ('admin',
+                 'general_manager1',
+                 'manager3',
+                 'manager4',
+                 'test',
+                 'member1',
+                 'member2',
+                 'member3',
+                 'member4',
+                 'member5')
 
 
 class AccessContractTestCase(WorkoutManagerAccessTestCase):
@@ -39,9 +50,18 @@ class AccessContractTestCase(WorkoutManagerAccessTestCase):
     Test accessing the detail page of a contract
     '''
     url = reverse('gym:contract:view', kwargs={'pk': 1})
-    user_success = ('manager1', 'manager2')
-    user_fail = ('admin', 'general_manager1', 'manager3', 'manager4', 'test',
-                 'member1', 'member2', 'member3', 'member4', 'member5')
+    user_success = ('manager1',
+                    'manager2')
+    user_fail = ('admin',
+                 'general_manager1',
+                 'manager3',
+                 'manager4',
+                 'test',
+                 'member1',
+                 'member2',
+                 'member3',
+                 'member4',
+                 'member5')
 
 
 class AccessContractOverviewTestCase(WorkoutManagerAccessTestCase):
@@ -49,9 +69,18 @@ class AccessContractOverviewTestCase(WorkoutManagerAccessTestCase):
     Test accessing the contract list page
     '''
     url = reverse('gym:contract:list', kwargs={'user_pk': 4})
-    user_success = ('manager1', 'manager2')
-    user_fail = ('admin', 'general_manager1', 'manager3', 'manager4', 'test',
-                 'member1', 'member2', 'member3', 'member4', 'member5')
+    user_success = ('manager1',
+                    'manager2')
+    user_fail = ('admin',
+                 'general_manager1',
+                 'manager3',
+                 'manager4',
+                 'test',
+                 'member1',
+                 'member2',
+                 'member3',
+                 'member4',
+                 'member5')
 
 
 class EditContractTestCase(WorkoutManagerEditTestCase):
@@ -62,11 +91,18 @@ class EditContractTestCase(WorkoutManagerEditTestCase):
     pk = 1
     object_class = Contract
     url = 'gym:contract:edit'
-    user_success = ('manager1', 'manager2')
-    user_fail = ('admin', 'general_manager1', 'manager3', 'manager4', 'test',
-                 'member1', 'member2', 'member3', 'member4', 'member5')
-    data = {
-        'note': 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr',
-        'amount': 35,
-        'payment': '5'
-    }
+    user_success = ('manager1',
+                    'manager2')
+    user_fail = ('admin',
+                 'general_manager1',
+                 'manager3',
+                 'manager4',
+                 'test',
+                 'member1',
+                 'member2',
+                 'member3',
+                 'member4',
+                 'member5')
+    data = {'note': 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr',
+            'amount': 35,
+            'payment': '5'}

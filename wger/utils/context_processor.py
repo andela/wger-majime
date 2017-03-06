@@ -51,6 +51,7 @@ def processor(request):
         'request_absolute_path': request.build_absolute_uri(),
         'image_absolute_path': request.build_absolute_uri(static_path),
 
+
         # Translation links
         'i18n_path': i18n_path,
 
@@ -71,8 +72,8 @@ def processor(request):
     if '/software/' in request.get_full_path() \
        or '/contact' in request.get_full_path() \
        or '/api/v2' in request.get_full_path():
-        context['active_tab'] = constants.SOFTWARE_TAB
-        context['show_shariff'] = True
+            context['active_tab'] = constants.SOFTWARE_TAB
+            context['show_shariff'] = True
 
     elif '/exercise/' in request.get_full_path():
         context['active_tab'] = constants.EXERCISE_TAB

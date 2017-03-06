@@ -36,16 +36,13 @@ class IcalToolsTestCase(WorkoutManagerTestCase):
         start_date = datetime.date(2013, 12, 5)
 
         # Find next monday
-        self.assertEqual(next_weekday(start_date, 0),
-                         datetime.date(2013, 12, 9))
+        self.assertEqual(next_weekday(start_date, 0), datetime.date(2013, 12, 9))
 
         # Find next wednesday
-        self.assertEqual(next_weekday(start_date, 2),
-                         datetime.date(2013, 12, 11))
+        self.assertEqual(next_weekday(start_date, 2), datetime.date(2013, 12, 11))
 
         # Find next saturday
-        self.assertEqual(next_weekday(start_date, 5),
-                         datetime.date(2013, 12, 7))
+        self.assertEqual(next_weekday(start_date, 5), datetime.date(2013, 12, 7))
 
 
 class WorkoutICalExportTestCase(WorkoutManagerTestCase):
@@ -55,16 +52,14 @@ class WorkoutICalExportTestCase(WorkoutManagerTestCase):
 
     def export_ical_token(self):
         '''
-        Helper function that checks exporing an ical file
-        using tokens for access
+        Helper function that checks exporing an ical file using tokens for access
         '''
 
         user = User.objects.get(username='test')
         uid, token = make_token(user)
-        response = self.client.get(reverse('manager:workout:ical',
-                                           kwargs={'pk': 3,
-                                                   'uidb64': uid,
-                                                   'token': token}))
+        response = self.client.get(reverse('manager:workout:ical', kwargs={'pk': 3,
+                                                                           'uidb64': uid,
+                                                                           'token': token}))
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'text/calendar')
@@ -82,10 +77,9 @@ class WorkoutICalExportTestCase(WorkoutManagerTestCase):
 
         uid = 'AB'
         token = 'abc-11223344556677889900'
-        response = self.client.get(reverse('manager:workout:ical',
-                                           kwargs={'pk': 3,
-                                                   'uidb64': uid,
-                                                   'token': token}))
+        response = self.client.get(reverse('manager:workout:ical', kwargs={'pk': 3,
+                                                                           'uidb64': uid,
+                                                                           'token': token}))
 
         self.assertEqual(response.status_code, 403)
 
@@ -94,8 +88,7 @@ class WorkoutICalExportTestCase(WorkoutManagerTestCase):
         Helper function
         '''
 
-        response = self.client.get(reverse('manager:workout:ical',
-                                           kwargs={'pk': 3}))
+        response = self.client.get(reverse('manager:workout:ical', kwargs={'pk': 3}))
 
         if fail:
             self.assertIn(response.status_code, (403, 404, 302))
@@ -130,8 +123,7 @@ class WorkoutICalExportTestCase(WorkoutManagerTestCase):
 
     def test_export_ical_other(self):
         '''
-        Tests exporting a workout as an ical file as a logged user
-         not owning the data
+        Tests exporting a workout as an ical file as a logged user not owning the data
         '''
 
         self.user_login('admin')
@@ -147,16 +139,14 @@ class ScheduleICalExportTestCase(WorkoutManagerTestCase):
 
     def export_ical_token(self):
         '''
-        Helper function that checks exporing an ical file using tokens
-        for access
+        Helper function that checks exporing an ical file using tokens for access
         '''
 
         user = User.objects.get(username='test')
         uid, token = make_token(user)
-        response = self.client.get(reverse('manager:schedule:ical',
-                                           kwargs={'pk': 2,
-                                                   'uidb64': uid,
-                                                   'token': token}))
+        response = self.client.get(reverse('manager:schedule:ical', kwargs={'pk': 2,
+                                                                            'uidb64': uid,
+                                                                            'token': token}))
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'text/calendar')
@@ -174,10 +164,9 @@ class ScheduleICalExportTestCase(WorkoutManagerTestCase):
 
         uid = 'AB'
         token = 'abc-11223344556677889900'
-        response = self.client.get(reverse('manager:schedule:ical',
-                                           kwargs={'pk': 2,
-                                                   'uidb64': uid,
-                                                   'token': token}))
+        response = self.client.get(reverse('manager:schedule:ical', kwargs={'pk': 2,
+                                                                            'uidb64': uid,
+                                                                            'token': token}))
 
         self.assertEqual(response.status_code, 403)
 
@@ -186,8 +175,7 @@ class ScheduleICalExportTestCase(WorkoutManagerTestCase):
         Helper function
         '''
 
-        response = self.client.get(reverse('manager:schedule:ical',
-                                           kwargs={'pk': 2}))
+        response = self.client.get(reverse('manager:schedule:ical', kwargs={'pk': 2}))
 
         if fail:
             self.assertIn(response.status_code, (403, 404, 302))
@@ -222,8 +210,7 @@ class ScheduleICalExportTestCase(WorkoutManagerTestCase):
 
     def test_export_ical_other(self):
         '''
-        Tests exporting a schedule as an ical file as a logged user
-        not owning the data
+        Tests exporting a schedule as an ical file as a logged user not owning the data
         '''
 
         self.user_login('test')

@@ -17,18 +17,24 @@ import logging
 
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.utils.translation import ugettext_lazy, ugettext as _
-from django.contrib.auth.mixins import PermissionRequiredMixin, \
-    LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 
-from django.views.generic import (DeleteView, CreateView, UpdateView, ListView)
+from django.views.generic import (
+    DeleteView,
+    CreateView,
+    UpdateView,
+    ListView
+)
 
 from wger.nutrition.models import WeightUnit
 from wger.utils.constants import PAGINATION_OBJECTS_PER_PAGE
 from wger.utils.language import load_language
-from wger.utils.generic_views import (WgerFormMixin, WgerDeleteMixin)
+from wger.utils.generic_views import (
+    WgerFormMixin,
+    WgerDeleteMixin
+)
 
 logger = logging.getLogger(__name__)
-
 # ************************
 # Weight units functions
 # ************************
@@ -52,8 +58,10 @@ class WeightUnitListView(PermissionRequiredMixin, ListView):
         return WeightUnit.objects.filter(language=load_language())
 
 
-class WeightUnitCreateView(WgerFormMixin, LoginRequiredMixin,
-                           PermissionRequiredMixin, CreateView):
+class WeightUnitCreateView(WgerFormMixin,
+                           LoginRequiredMixin,
+                           PermissionRequiredMixin,
+                           CreateView):
     '''
     Generic view to add a new weight unit for ingredients
     '''
@@ -72,8 +80,10 @@ class WeightUnitCreateView(WgerFormMixin, LoginRequiredMixin,
         return super(WeightUnitCreateView, self).form_valid(form)
 
 
-class WeightUnitDeleteView(WgerDeleteMixin, LoginRequiredMixin,
-                           PermissionRequiredMixin, DeleteView):
+class WeightUnitDeleteView(WgerDeleteMixin,
+                           LoginRequiredMixin,
+                           PermissionRequiredMixin,
+                           DeleteView):
     '''
     Generic view to delete a weight unit
     '''
@@ -94,8 +104,10 @@ class WeightUnitDeleteView(WgerDeleteMixin, LoginRequiredMixin,
         return context
 
 
-class WeightUnitUpdateView(WgerFormMixin, LoginRequiredMixin,
-                           PermissionRequiredMixin, UpdateView):
+class WeightUnitUpdateView(WgerFormMixin,
+                           LoginRequiredMixin,
+                           PermissionRequiredMixin,
+                           UpdateView):
     '''
     Generic view to update an weight unit
     '''

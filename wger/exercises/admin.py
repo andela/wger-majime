@@ -30,7 +30,6 @@ class ExerciseAdmin(admin.ModelAdmin):
 
     inlines = [ExerciseCommentInline]
 
-
 admin.site.register(Exercise, ExerciseAdmin)
 admin.site.register(ExerciseCategory)
 admin.site.register(Language)
