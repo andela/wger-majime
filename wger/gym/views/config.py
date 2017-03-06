@@ -15,8 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 import logging
 
-from django.contrib.auth.mixins import (
-    LoginRequiredMixin, PermissionRequiredMixin)
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.urlresolvers import reverse
 from django.http.response import HttpResponseForbidden
 from django.utils.translation import ugettext as _
@@ -25,11 +24,11 @@ from django.views.generic import UpdateView
 from wger.gym.models import GymConfig
 from wger.utils.generic_views import WgerFormMixin
 
+
 logger = logging.getLogger(__name__)
 
 
-class GymConfigUpdateView(WgerFormMixin, LoginRequiredMixin,
-                          PermissionRequiredMixin, UpdateView):
+class GymConfigUpdateView(WgerFormMixin, LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     '''
     View to update an existing gym configuration
     '''
@@ -46,8 +45,7 @@ class GymConfigUpdateView(WgerFormMixin, LoginRequiredMixin,
             gym_id = request.user.userprofile.gym_id
             if gym_id != int(self.kwargs['pk']):
                 return HttpResponseForbidden()
-        return super(GymConfigUpdateView, self).dispatch(request, *args,
-                                                         **kwargs)
+        return super(GymConfigUpdateView, self).dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         '''
@@ -60,7 +58,6 @@ class GymConfigUpdateView(WgerFormMixin, LoginRequiredMixin,
         Send some additional data to the template
         '''
         context = super(GymConfigUpdateView, self).get_context_data(**kwargs)
-        context['form_action'] = reverse(
-            'gym:config:edit', kwargs={'pk': self.object.id})
+        context['form_action'] = reverse('gym:config:edit', kwargs={'pk': self.object.id})
         context['title'] = _(u'Edit {0}').format(self.object)
         return context

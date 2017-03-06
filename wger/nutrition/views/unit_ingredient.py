@@ -15,28 +15,41 @@
 # You should have received a copy of the GNU Affero General Public License
 import logging
 
-from django.contrib.auth.mixins import PermissionRequiredMixin, \
-    LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
 from django.forms import ModelForm, ModelChoiceField
 from django.utils.translation import ugettext_lazy
 
 from wger.utils.language import load_language
-from django.views.generic import (DeleteView, CreateView, UpdateView)
-from wger.nutrition.models import (Ingredient, IngredientWeightUnit,
-                                   WeightUnit)
-from wger.utils.generic_views import (WgerFormMixin, WgerDeleteMixin)
+from django.views.generic import (
+    DeleteView,
+    CreateView,
+    UpdateView
+)
+from wger.nutrition.models import (
+    Ingredient,
+    IngredientWeightUnit,
+    WeightUnit
+)
+from wger.utils.generic_views import (
+    WgerFormMixin,
+    WgerDeleteMixin
+)
+
 
 logger = logging.getLogger(__name__)
+
 
 # ************************
 # Weight units to ingredient functions
 # ************************
 
 
-class WeightUnitIngredientCreateView(WgerFormMixin, LoginRequiredMixin,
-                                     PermissionRequiredMixin, CreateView):
+class WeightUnitIngredientCreateView(WgerFormMixin,
+                                     LoginRequiredMixin,
+                                     PermissionRequiredMixin,
+                                     CreateView):
     '''
     Generic view to add a new weight unit to ingredient entry
     '''
@@ -47,21 +60,16 @@ class WeightUnitIngredientCreateView(WgerFormMixin, LoginRequiredMixin,
 
     # Send some additional data to the template
     def get_context_data(self, **kwargs):
-        context = super(WeightUnitIngredientCreateView, self).get_context_data(
-            **kwargs)
-        context['form_action'] = reverse(
-            'nutrition:unit_ingredient:add',
-            kwargs={'ingredient_pk': self.kwargs['ingredient_pk']})
+        context = super(WeightUnitIngredientCreateView, self).get_context_data(**kwargs)
+        context['form_action'] = reverse('nutrition:unit_ingredient:add',
+                                         kwargs={'ingredient_pk': self.kwargs['ingredient_pk']})
         return context
 
     def get_success_url(self):
-        return reverse(
-            'nutrition:ingredient:view',
-            kwargs={'id': self.kwargs['ingredient_pk']})
+        return reverse('nutrition:ingredient:view', kwargs={'id': self.kwargs['ingredient_pk']})
 
     def form_valid(self, form):
-        ingredient = get_object_or_404(
-            Ingredient, pk=self.kwargs['ingredient_pk'])
+        ingredient = get_object_or_404(Ingredient, pk=self.kwargs['ingredient_pk'])
         form.instance.ingredient = ingredient
         return super(WeightUnitIngredientCreateView, self).form_valid(form)
 
@@ -71,8 +79,7 @@ class WeightUnitIngredientCreateView(WgerFormMixin, LoginRequiredMixin,
         '''
 
         class IngredientWeightUnitForm(ModelForm):
-            unit = ModelChoiceField(queryset=WeightUnit.objects.filter(
-                language=load_language()))
+            unit = ModelChoiceField(queryset=WeightUnit.objects.filter(language=load_language()))
 
             class Meta:
                 model = IngredientWeightUnit
@@ -81,8 +88,10 @@ class WeightUnitIngredientCreateView(WgerFormMixin, LoginRequiredMixin,
         return IngredientWeightUnitForm
 
 
-class WeightUnitIngredientUpdateView(WgerFormMixin, LoginRequiredMixin,
-                                     PermissionRequiredMixin, UpdateView):
+class WeightUnitIngredientUpdateView(WgerFormMixin,
+                                     LoginRequiredMixin,
+                                     PermissionRequiredMixin,
+                                     UpdateView):
     '''
     Generic view to update an weight unit to ingredient entry
     '''
@@ -93,9 +102,7 @@ class WeightUnitIngredientUpdateView(WgerFormMixin, LoginRequiredMixin,
     permission_required = 'nutrition.add_ingredientweightunit'
 
     def get_success_url(self):
-        return reverse(
-            'nutrition:ingredient:view',
-            kwargs={'id': self.object.ingredient.id})
+        return reverse('nutrition:ingredient:view', kwargs={'id': self.object.ingredient.id})
 
     def get_form_class(self):
         '''
@@ -103,8 +110,7 @@ class WeightUnitIngredientUpdateView(WgerFormMixin, LoginRequiredMixin,
         '''
 
         class IngredientWeightUnitForm(ModelForm):
-            unit = ModelChoiceField(queryset=WeightUnit.objects.filter(
-                language=load_language()))
+            unit = ModelChoiceField(queryset=WeightUnit.objects.filter(language=load_language()))
 
             class Meta:
                 model = IngredientWeightUnit
@@ -113,8 +119,10 @@ class WeightUnitIngredientUpdateView(WgerFormMixin, LoginRequiredMixin,
         return IngredientWeightUnitForm
 
 
-class WeightUnitIngredientDeleteView(WgerDeleteMixin, LoginRequiredMixin,
-                                     PermissionRequiredMixin, DeleteView):
+class WeightUnitIngredientDeleteView(WgerDeleteMixin,
+                                     LoginRequiredMixin,
+                                     PermissionRequiredMixin,
+                                     DeleteView):
     '''
     Generic view to delete a weight unit to ingredient entry
     '''
@@ -126,6 +134,4 @@ class WeightUnitIngredientDeleteView(WgerDeleteMixin, LoginRequiredMixin,
     permission_required = 'nutrition.add_ingredientweightunit'
 
     def get_success_url(self):
-        return reverse(
-            'nutrition:ingredient:view',
-            kwargs={'id': self.object.ingredient.id})
+        return reverse('nutrition:ingredient:view', kwargs={'id': self.object.ingredient.id})

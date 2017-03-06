@@ -21,6 +21,5 @@ class ConfigConfig(AppConfig):
     name = 'wger.config'
     verbose_name = "Config"
 
-    # uncomment to use the function.
-    # def ready(self):
-    #     import wger.config.signals
+    def ready(self):
+        import wger.config.signals

@@ -17,8 +17,10 @@ from django.core.urlresolvers import reverse
 
 from wger.core.tests import api_base_test
 from wger.core.tests.base_testcase import (
-    WorkoutManagerDeleteTestCase, WorkoutManagerTestCase,
-    WorkoutManagerEditTestCase, WorkoutManagerAddTestCase,
+    WorkoutManagerDeleteTestCase,
+    WorkoutManagerTestCase,
+    WorkoutManagerEditTestCase,
+    WorkoutManagerAddTestCase,
     WorkoutManagerAccessTestCase)
 from wger.exercises.models import ExerciseCategory
 from wger.utils.cache import get_template_cache_name
@@ -33,8 +35,7 @@ class ExerciseCategoryRepresentationTestCase(WorkoutManagerTestCase):
         '''
         Test that the representation of an object is correct
         '''
-        self.assertEqual(
-            "{0}".format(ExerciseCategory.objects.get(pk=1)), 'Category')
+        self.assertEqual("{0}".format(ExerciseCategory.objects.get(pk=1)), 'Category')
 
 
 class CategoryOverviewTestCase(WorkoutManagerAccessTestCase):
@@ -44,9 +45,17 @@ class CategoryOverviewTestCase(WorkoutManagerAccessTestCase):
     url = 'exercise:category:list'
     anonymous_fail = True
     user_success = 'admin'
-    user_fail = ('manager1', 'manager2'
-                 'general_manager1', 'manager3', 'manager4', 'test', 'member1',
-                 'member2', 'member3', 'member4', 'member5')
+    user_fail = ('manager1',
+                 'manager2'
+                 'general_manager1',
+                 'manager3',
+                 'manager4',
+                 'test',
+                 'member1',
+                 'member2',
+                 'member3',
+                 'member4',
+                 'member5')
 
 
 class DeleteExerciseCategoryTestCase(WorkoutManagerDeleteTestCase):
@@ -96,34 +105,29 @@ class ExerciseCategoryCacheTestCase(WorkoutManagerTestCase):
         self.client.get(reverse('exercise:exercise:overview'))
         self.client.get(reverse('exercise:exercise:view', kwargs={'id': 2}))
 
-        old_exercise_overview = cache.get(
-            get_template_cache_name('exercise-overview', 2))
-        old_exercise_overview_mobile = cache.get(
-            get_template_cache_name('exercise-overview-mobile', 2))
+        old_exercise_overview = cache.get(get_template_cache_name('exercise-overview', 2))
+        old_exercise_overview_mobile = cache.get(get_template_cache_name('exercise-overview-mobile',
+                                                                         2))
 
         category = ExerciseCategory.objects.get(pk=2)
         category.name = 'Cool category'
         category.save()
 
-        self.assertFalse(
-            cache.get(get_template_cache_name('exercise-overview', 2)))
-        self.assertFalse(
-            cache.get(get_template_cache_name('exercise-overview-mobile', 2)))
+        self.assertFalse(cache.get(get_template_cache_name('exercise-overview', 2)))
+        self.assertFalse(cache.get(get_template_cache_name('exercise-overview-mobile', 2)))
 
         self.client.get(reverse('exercise:exercise:overview'))
         self.client.get(reverse('exercise:muscle:overview'))
         self.client.get(reverse('exercise:exercise:view', kwargs={'id': 2}))
 
-        new_exercise_overview = cache.get(
-            get_template_cache_name('exercise-overview', 2))
-        new_exercise_overview_mobile = cache.get(
-            get_template_cache_name('exercise-overview-mobile', 2))
+        new_exercise_overview = cache.get(get_template_cache_name('exercise-overview', 2))
+        new_exercise_overview_mobile = cache.get(get_template_cache_name('exercise-overview-mobile',
+                                                                         2))
 
         if not self.is_mobile:
             self.assertNotEqual(old_exercise_overview, new_exercise_overview)
         else:
-            self.assertNotEqual(old_exercise_overview_mobile,
-                                new_exercise_overview_mobile)
+            self.assertNotEqual(old_exercise_overview_mobile, new_exercise_overview_mobile)
 
 
 class ExerciseCategoryApiTestCase(api_base_test.ApiBaseResourceTestCase):

@@ -19,6 +19,7 @@ from django.conf.urls import url, include
 from wger.email.forms import EmailListForm
 from wger.email.views import gym
 
+
 # sub patterns for email lists
 patterns_email = [
     url(r'^overview/gym/(?P<gym_pk>\d+)$',
@@ -28,6 +29,7 @@ patterns_email = [
         gym.EmailListFormPreview(EmailListForm),
         name='add-gym'),
 ]
+
 
 urlpatterns = [
     url(r'^email/', include(patterns_email, namespace="email")),

@@ -28,8 +28,7 @@ class ImagePendingDetailTestCase(WorkoutManagerTestCase):
         '''
         Helper function
         '''
-        response = self.client.get(
-            reverse('exercise:exercise:view', kwargs={'id': 2}))
+        response = self.client.get(reverse('exercise:exercise:view', kwargs={'id': 2}))
         self.assertEqual(response.status_code, 200)
 
         if not fail:
@@ -43,8 +42,7 @@ class ImagePendingDetailTestCase(WorkoutManagerTestCase):
 
     def test_pending_view_admin(self):
         '''
-        Tests the detail page of an exercise
-        with a pending image as an admin user
+        Tests the detail page of an exercise with a pending image as an admin user
         '''
 
         self.user_login('admin')
@@ -52,8 +50,7 @@ class ImagePendingDetailTestCase(WorkoutManagerTestCase):
 
     def test_pending_view_user(self):
         '''
-        Tests the detail page of an exercise
-        with a pending image as a regular user
+        Tests the detail page of an exercise with a pending image as a regular user
         '''
 
         self.user_login('test')
@@ -61,8 +58,7 @@ class ImagePendingDetailTestCase(WorkoutManagerTestCase):
 
     def test_pending_view_logged_out(self):
         '''
-        Tests the detail page of an exercise with
-        a pending image as a logged out user
+        Tests the detail page of an exercise with a pending image as a logged out user
         '''
 
         self.pending_view(fail=True)
@@ -79,8 +75,7 @@ class ImageAcceptTestCase(WorkoutManagerTestCase):
         '''
         image = ExerciseImage.objects.get(pk=3)
         self.assertEqual(image.status, ExerciseImage.STATUS_PENDING)
-        response = self.client.get(
-            reverse('exercise:image:accept', kwargs={'pk': 3}))
+        response = self.client.get(reverse('exercise:image:accept', kwargs={'pk': 3}))
         image = ExerciseImage.objects.get(pk=3)
         self.assertEqual(response.status_code, 302)
 
@@ -128,8 +123,7 @@ class ImageRejectTestCase(WorkoutManagerTestCase):
         '''
         image = ExerciseImage.objects.get(pk=3)
         self.assertEqual(image.status, ExerciseImage.STATUS_PENDING)
-        response = self.client.get(
-            reverse('exercise:image:decline', kwargs={'pk': 3}))
+        response = self.client.get(reverse('exercise:image:decline', kwargs={'pk': 3}))
         image = ExerciseImage.objects.get(pk=3)
         self.assertEqual(response.status_code, 302)
 

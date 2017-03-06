@@ -6,6 +6,6 @@
 -r requirements.txt
 
 # Development packages
-flake8
+pep8
 django-debug-toolbar
 coverage
