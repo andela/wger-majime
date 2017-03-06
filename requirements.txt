@@ -27,10 +27,7 @@ invoke==0.14.0
 Jinja2==2.9.5
 MarkupSafe==0.23
 oauth2==1.9.0.post1
-<<<<<<< HEAD
-=======
 oauth2-provider==0.0
->>>>>>> [chore 140221857] Remove unnecessary codes
 oauthlib==2.0.1
 olefile==0.44
 packaging==16.8
