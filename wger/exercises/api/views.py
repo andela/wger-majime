@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Workout Manager.  If not, see <http://www.gnu.org/licenses/>.
-
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -76,6 +75,51 @@ class ExerciseViewSet(viewsets.ModelViewSet):
         obj.set_author(self.request)
         obj.save()
 
+
+@api_view(['GET'])
+def info(request):
+    """It gets all info about an exercise."""
+    """
+
+    you search by the name of the exercise
+    Then through searching, it brings up all information about it
+
+    """
+    q = request.GET.get('term', None)
+    results = []
+    json_response = {}
+
+    if q:
+        languages = load_item_languages(LanguageConfig.SHOW_ITEM_EXERCISES,
+                                        language_code=request.GET.get('language', None))
+        exercise = (Exercise.objects.get(name__icontains=q))
+
+        if exercise.main_image:
+            image_obj = exercise.main_image
+            image = image_obj.image.url
+            t = get_thumbnailer(image_obj.image)
+            thumbnail = t.get_thumbnail(aliases.get('micro_cropped')).url
+        else:
+            image = None
+            thumbnail = None
+        exercise_json = {
+            'value': exercise.name,
+            'data': {
+                'id': exercise.id,
+                'name': exercise.name,
+                'category': _(exercise.category.name),
+                'image': image,
+                'image_thumbnail': thumbnail,
+                'description': exercise.description,
+                'muscles': [muscles.name for muscles in exercise.muscles.all()],
+                'muscles_secondary': [muscles.name for muscles in exercise.muscles_secondary.all()],
+                'equipment': [equipment.name for equipment in exercise.equipment.all()],
+            }
+        }
+        results.append(exercise_json)
+    json_response['information'] = results
+
+    return Response(json_response)
 
 @api_view(['GET'])
 def search(request):
