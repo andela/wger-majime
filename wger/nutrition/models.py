@@ -109,48 +109,53 @@ class NutritionPlan(models.Model):
         '''
         Sums the nutritional info of all items in the plan
         '''
-        use_metric = self.user.userprofile.use_metric
-        unit = 'kg' if use_metric else 'lb'
-        result = {'total': {'energy': 0,
-                            'protein': 0,
-                            'carbohydrates': 0,
-                            'carbohydrates_sugar': 0,
-                            'fat': 0,
-                            'fat_saturated': 0,
-                            'fibres': 0,
-                            'sodium': 0},
-                  'percent': {'protein': 0,
-                              'carbohydrates': 0,
-                              'fat': 0},
-                  'per_kg': {'protein': 0,
-                             'carbohydrates': 0,
-                             'fat': 0},
-                  }
+        result = cache.get(cache_mapper.get_nutrition_result_values(self.pk))
+        if not result:
+            use_metric = self.user.userprofile.use_metric
+            unit = 'kg' if use_metric else 'lb'
+            result = {'total': {'energy': 0,
+                                'protein': 0,
+                                'carbohydrates': 0,
+                                'carbohydrates_sugar': 0,
+                                'fat': 0,
+                                'fat_saturated': 0,
+                                'fibres': 0,
+                                'sodium': 0},
+                      'percent': {'protein': 0,
+                                  'carbohydrates': 0,
+                                  'fat': 0},
+                      'per_kg': {'protein': 0,
+                                 'carbohydrates': 0,
+                                 'fat': 0},
+                      }
 
-        # Energy
-        for meal in self.meal_set.select_related():
-            values = meal.get_nutritional_values(use_metric=use_metric)
-            for key in result['total'].keys():
-                result['total'][key] += values[key]
+            # Energy
+            for meal in self.meal_set.select_related():
+                values = meal.get_nutritional_values(use_metric=use_metric)
+                for key in result['total'].keys():
+                    result['total'][key] += values[key]
 
-        energy = result['total']['energy']
+            energy = result['total']['energy']
 
-        # In percent
-        if energy:
-            for key in result['percent'].keys():
-                result['percent'][key] = \
-                    result['total'][key] * ENERGY_FACTOR[key][unit] / energy * 100
+            # In percent
+            if energy:
+                for key in result['percent'].keys():
+                    result['percent'][key] = \
+                        result['total'][key] * ENERGY_FACTOR[key][unit] / energy * 100
 
-        # Per body weight
-        weight_entry = self.get_closest_weight_entry()
-        if weight_entry:
-            for key in result['per_kg'].keys():
-                result['per_kg'][key] = result['total'][key] / weight_entry.weight
+            # Per body weight
+            weight_entry = self.get_closest_weight_entry()
+            if weight_entry:
+                for key in result['per_kg'].keys():
+                    result['per_kg'][key] = result['total'][key] / weight_entry.weight
 
-        # Only 2 decimal places, anything else doesn't make sense
-        for key in result.keys():
-            for i in result[key]:
-                result[key][i] = Decimal(result[key][i]).quantize(TWOPLACES)
+            # Only 2 decimal places, anything else doesn't make sense
+            for key in result.keys():
+                for i in result[key]:
+                    result[key][i] = Decimal(result[key][i]).quantize(TWOPLACES)
+
+            #save to cache
+            cache.set(cache_mapper.get_nutrition_result_values(self.pk), result)
 
         return result
 
@@ -546,25 +551,30 @@ class Meal(models.Model):
 
         :param use_metric Flag that controls the units used
         '''
-        nutritional_info = {'energy': 0,
-                            'protein': 0,
-                            'carbohydrates': 0,
-                            'carbohydrates_sugar': 0,
-                            'fat': 0,
-                            'fat_saturated': 0,
-                            'fibres': 0,
-                            'sodium': 0}
+        nutritional_info = cache.get(cache_mapper.get_meal_nutritional_info(self.pk))
+        if not nutritional_info:
+            nutritional_info = {'energy': 0,
+                                'protein': 0,
+                                'carbohydrates': 0,
+                                'carbohydrates_sugar': 0,
+                                'fat': 0,
+                                'fat_saturated': 0,
+                                'fibres': 0,
+                                'sodium': 0}
 
-        # Get the calculated values from the meal item and add them
-        for item in self.mealitem_set.select_related():
+            # Get the calculated values from the meal item and add them
+            for item in self.mealitem_set.select_related():
 
-            values = item.get_nutritional_values(use_metric=use_metric)
-            for key in nutritional_info.keys():
-                nutritional_info[key] += values[key]
+                values = item.get_nutritional_values(use_metric=use_metric)
+                for key in nutritional_info.keys():
+                    nutritional_info[key] += values[key]
 
-        # Only 2 decimal places, anything else doesn't make sense
-        for i in nutritional_info:
-            nutritional_info[i] = Decimal(nutritional_info[i]).quantize(TWOPLACES)
+            # Only 2 decimal places, anything else doesn't make sense
+            for i in nutritional_info:
+                nutritional_info[i] = Decimal(nutritional_info[i]).quantize(TWOPLACES)
+
+            #Save to cache
+            cache.set(cache_mapper.get_meal_nutritional_info(self.pk), nutritional_info)
 
         return nutritional_info
 
@@ -624,54 +634,59 @@ class MealItem(models.Model):
 
         :param use_metric Flag that controls the units used
         '''
-        nutritional_info = {'energy': 0,
-                            'protein': 0,
-                            'carbohydrates': 0,
-                            'carbohydrates_sugar': 0,
-                            'fat': 0,
-                            'fat_saturated': 0,
-                            'fibres': 0,
-                            'sodium': 0}
-        # Calculate the base weight of the item
-        if self.get_unit_type() == MEALITEM_WEIGHT_GRAM:
-            item_weight = self.amount
-        else:
-            item_weight = (self.amount *
-                           self.weight_unit.amount *
-                           self.weight_unit.gram)
+        nutritional_info = cache.get(cache_mapper.get_item_nutritional_info(self.pk))
+        if not nutritional_info:
+            nutritional_info = {'energy': 0,
+                                'protein': 0,
+                                'carbohydrates': 0,
+                                'carbohydrates_sugar': 0,
+                                'fat': 0,
+                                'fat_saturated': 0,
+                                'fibres': 0,
+                                'sodium': 0}
+            # Calculate the base weight of the item
+            if self.get_unit_type() == MEALITEM_WEIGHT_GRAM:
+                item_weight = self.amount
+            else:
+                item_weight = (self.amount *
+                               self.weight_unit.amount *
+                               self.weight_unit.gram)
 
-        nutritional_info['energy'] += self.ingredient.energy * item_weight / 100
-        nutritional_info['protein'] += self.ingredient.protein * item_weight / 100
-        nutritional_info['carbohydrates'] += self.ingredient.carbohydrates * item_weight / 100
+            nutritional_info['energy'] += self.ingredient.energy * item_weight / 100
+            nutritional_info['protein'] += self.ingredient.protein * item_weight / 100
+            nutritional_info['carbohydrates'] += self.ingredient.carbohydrates * item_weight / 100
 
-        if self.ingredient.carbohydrates_sugar:
-            nutritional_info['carbohydrates_sugar'] += self.ingredient.carbohydrates_sugar \
-                * item_weight / 100
+            if self.ingredient.carbohydrates_sugar:
+                nutritional_info['carbohydrates_sugar'] += self.ingredient.carbohydrates_sugar \
+                    * item_weight / 100
 
-        nutritional_info['fat'] += self.ingredient.fat * item_weight / 100
+            nutritional_info['fat'] += self.ingredient.fat * item_weight / 100
 
-        if self.ingredient.fat_saturated:
-            nutritional_info['fat_saturated'] += self.ingredient.fat_saturated * item_weight / 100
+            if self.ingredient.fat_saturated:
+                nutritional_info['fat_saturated'] += self.ingredient.fat_saturated * item_weight / 100
 
-        if self.ingredient.fibres:
-            nutritional_info['fibres'] += self.ingredient.fibres * item_weight / 100
+            if self.ingredient.fibres:
+                nutritional_info['fibres'] += self.ingredient.fibres * item_weight / 100
 
-        if self.ingredient.sodium:
-            nutritional_info['sodium'] += self.ingredient.sodium * item_weight / 100
+            if self.ingredient.sodium:
+                nutritional_info['sodium'] += self.ingredient.sodium * item_weight / 100
 
-        # If necessary, convert weight units
-        if not use_metric:
-            for key, value in nutritional_info.items():
+            # If necessary, convert weight units
+            if not use_metric:
+                for key, value in nutritional_info.items():
 
-                # Energy is not a weight!
-                if key == 'energy':
-                    continue
+                    # Energy is not a weight!
+                    if key == 'energy':
+                        continue
 
-                # Everything else, to ounces
-                nutritional_info[key] = AbstractWeight(value, 'g').oz
+                    # Everything else, to ounces
+                    nutritional_info[key] = AbstractWeight(value, 'g').oz
 
-        # Only 2 decimal places, anything else doesn't make sense
-        for i in nutritional_info:
-            nutritional_info[i] = Decimal(nutritional_info[i]).quantize(TWOPLACES)
+            # Only 2 decimal places, anything else doesn't make sense
+            for i in nutritional_info:
+                nutritional_info[i] = Decimal(nutritional_info[i]).quantize(TWOPLACES)
+
+            #Save to cache
+            cache.set(cache_mapper.get_item_nutritional_info(self.pk), nutritional_info)
 
         return nutritional_info
