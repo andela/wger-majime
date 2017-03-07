@@ -65,6 +65,9 @@ class CacheKeyMapper(object):
     LANGUAGE_CONFIG_CACHE_KEY = 'language-config-{0}-{1}'
     EXERCISE_CACHE_KEY_MUSCLE_BG = 'exercise-muscle-bg-{0}'
     INGREDIENT_CACHE_KEY = 'ingredient-{0}'
+    NUTRITION_RESULT_VALUES = 'nutrition-result-values-{0}'
+    ITEM_NUTRITIONAL_INFO = 'item-nutritional-info-{0}'
+    MEAL_NUTRITIONAL_INFO = 'meal-nutritional-info-{0}'
     WORKOUT_CANONICAL_REPRESENTATION = 'workout-canonical-representation-{0}'
     WORKOUT_LOG_LIST = 'workout-log-hash-{0}'
 
@@ -108,6 +111,24 @@ class CacheKeyMapper(object):
         Return the workout canonical representation
         '''
         return self.WORKOUT_CANONICAL_REPRESENTATION.format(self.get_pk(param))
+
+    def get_nutrition_result_values(self, param):
+        '''
+        Return the result dict of NutritionPlan
+        '''
+        return self.NUTRITION_RESULT_VALUES.format(self.get_pk(param))
+
+    def get_item_nutritional_info(self, param):
+        '''
+        Return the nutritional_info dict of MealItem
+        '''
+        return self.ITEM_NUTRITIONAL_INFO.format(self.get_pk(param))
+
+    def get_meal_nutritional_info(self, param):
+        '''
+        Return the nutritional_info dict of Meal
+        '''
+        return self.MEAL_NUTRITIONAL_INFO.format(self.get_pk(param))
 
     def get_workout_log_list(self, hash_value):
         '''
