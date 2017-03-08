@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Acv2 Facundo <acv2facundo@gmail.com>, 2014
 # Enrique Garcia <ea2809@gmail.com>, 2015
@@ -4341,3 +4341,12 @@ msgstr "Trapecio"
 
 msgid "Triceps brachii"
 msgstr "Tríceps braquial"
+
+msgid "Forearms"
+msgstr "Antebrazos"
+
+msgid "Posterious deltoid"
+msgstr "Deltoides posterious"
+
+msgid "Lateral deltoid"
+msgstr "Deltoides laterales"

@@ -2709,7 +2709,8 @@
             "category": 8,
             "uuid": "8c6c1544-cbf8-403c-ae12-b27b392702f8",
             "muscles": [
-                1
+                1,
+                19
             ],
             "license": 1,
             "name": "Biceps curl with cable"
@@ -2880,7 +2881,8 @@
             "category": 8,
             "uuid": "5baf40e5-ea3c-4f8d-b60a-d294ee2de55b",
             "muscles": [
-                1
+                1,
+                19
             ],
             "license": 1,
             "name": "Hammercurls on cable"
@@ -3978,7 +3980,8 @@
             "category": 10,
             "uuid": "e7fdd8fb-5e07-4a29-9d56-a005338b2e19",
             "muscles": [
-                1
+                1,
+                19
             ],
             "license": 1,
             "name": "Overhand Cable Curl"
@@ -6665,7 +6668,8 @@
             "category": 8,
             "uuid": "4e15a410-5530-4b86-964f-8af26e118e2b",
             "muscles": [
-                5
+                5,
+                19
             ],
             "license": 2,
             "name": "Body-Ups"

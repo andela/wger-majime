@@ -4391,3 +4391,12 @@ msgstr ""
 
 msgid "Triceps brachii"
 msgstr ""
+
+msgid "Forearms"
+msgstr ""
+
+msgid "Posterious deltoid"
+msgstr ""
+
+msgid "Lateral deltoid"
+msgstr ""
