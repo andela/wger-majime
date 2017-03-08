@@ -16,7 +16,7 @@
 
 import logging
 
-from django.shortcuts import render_to_response, redirect, render, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.template.context_processors import csrf
 from django.core.urlresolvers import reverse
@@ -71,7 +71,6 @@ def login(request):
     '''
     Small wrapper around the django login view
     '''
-
 
     context = {'active_tab': USER_TAB}
     if request.GET.get('next'):

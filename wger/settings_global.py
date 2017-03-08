@@ -17,7 +17,6 @@
 import re
 import sys
 import dotenv
-dotenv.load()
 
 
 '''
@@ -31,6 +30,8 @@ import os
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+
+dotenv.load()
 
 #
 # Application definition
@@ -48,8 +49,6 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = dotenv.get("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET"
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/dashboard'
 SOCIAL_AUTH_LOGIN_URL = '/'
-
-
 
 INSTALLED_APPS = (
     'django.contrib.auth',
