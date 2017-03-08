@@ -101,7 +101,7 @@ router.register(r'license', core_api_views.LicenseViewSet, base_name='license')
 router.register(r'setting-repetitionunit', core_api_views.RepetitionUnitViewSet, base_name='setting-repetition-unit')
 router.register(r'setting-weightunit', core_api_views.WeightUnitViewSet, base_name='setting-weight-unit')
 
-# Exercises app
+# Exercises app ###note this
 router.register(r'exercise', exercises_api_views.ExerciseViewSet, base_name='exercise')
 router.register(r'equipment', exercises_api_views.EquipmentViewSet, base_name='api')
 router.register(r'exercisecategory', exercises_api_views.ExerciseCategoryViewSet, base_name='exercisecategory')
