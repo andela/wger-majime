@@ -39,7 +39,6 @@ class UserLoginForm(AuthenticationForm):
     username = forms.CharField(label=_("Username or email"), max_length=254)
 
 
-
 class UserPreferencesForm(forms.ModelForm):
     class Meta:
         model = UserProfile
