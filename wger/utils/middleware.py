@@ -22,6 +22,9 @@ from django.conf import settings
 from django.contrib import auth
 from django.utils.functional import SimpleLazyObject
 from django.contrib.auth import login as django_login
+from social.apps.django_app.middleware import SocialAuthExceptionMiddleware
+from django.shortcuts import redirect
+from social import exceptions as social_exceptions
 
 from wger.core.demo import create_temporary_user
 
@@ -119,3 +122,11 @@ class JavascriptAJAXRedirectionMiddleware(object):
             response['X-wger-redirect'] = request.path
             response.content = request.path
         return response
+
+
+class SocialAuthExceptionMiddleware(SocialAuthExceptionMiddleware):
+    def process_exception(self, request, exception):
+        if hasattr(social_exceptions, 'AuthCanceled'):
+            return redirect("/user/login")
+        else:
+            raise exception
