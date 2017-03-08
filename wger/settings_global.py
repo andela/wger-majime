@@ -40,6 +40,8 @@ SITE_ID = 1
 ROOT_URLCONF = 'wger.urls'
 WSGI_APPLICATION = 'wger.wsgi.application'
 
+SOCIAL_AUTH_RAISE_EXCEPTIONS = False
+
 SOCIAL_AUTH_TWITTER_KEY = dotenv.get("SOCIAL_AUTH_TWITTER_KEY")
 SOCIAL_AUTH_TWITTER_SECRET = dotenv.get("SOCIAL_AUTH_TWITTER_SECRET")
 SOCIAL_AUTH_FACEBOOK_KEY = dotenv.get("SOCIAL_AUTH_FACEBOOK_KEY")
@@ -146,6 +148,7 @@ MIDDLEWARE_CLASSES = (
     'django_mobile.middleware.SetFlavourMiddleware',
     #social authentication
     'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
+    'wger.utils.middleware.SocialAuthExceptionMiddleware',
 )
 
 AUTHENTICATION_BACKENDS = (
