@@ -1,11 +1,25 @@
 {% extends "base.html" %}
 {% load i18n staticfiles wger_extras django_bootstrap_breadcrumbs %}
 
-{% block title %}{% trans "User list" %}{% endblock %}
+{% block title %}
+	{% if  show_active %}
+		{% trans "Active User list" %}
+	{% else %}
+		{% trans "Inactive User list" %}
+	{% endif %}
+
+{% endblock %}
+
 
 
 {% block content %}
-    {% include 'gym/partial_user_list.html' %}
+	{% include 'gym/partial_user_list.html' %}
+	{% if  show_active %}
+	   <a class="btn btn-danger" href="{% url 'core:user:inactive' %}" type="button">View deactivated users</a>
+   {% else %}
+	   <a class="btn btn-primary" href="{% url 'core:user:list' %}" type="button">Go back to active users</a>
+   {% endif %}
+
 {% endblock %}
 
 
