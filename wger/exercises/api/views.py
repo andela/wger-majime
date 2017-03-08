@@ -16,7 +16,7 @@
 # along with Workout Manager.  If not, see <http://www.gnu.org/licenses/>.
 
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+# from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, api_view
 
@@ -43,7 +43,7 @@ from wger.exercises.models import (
     Muscle
 )
 from wger.utils.language import load_item_languages, load_language
-from wger.utils.permissions import CreateOnlyPermission
+from wger.utils.permissions import ReadOnlyPermission
 
 
 class ExerciseViewSet(viewsets.ModelViewSet):
@@ -52,7 +52,7 @@ class ExerciseViewSet(viewsets.ModelViewSet):
     '''
     queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, CreateOnlyPermission)
+    permission_classes = (ReadOnlyPermission,)
     ordering_fields = '__all__'
     filter_fields = ('category',
                      'creation_date',
@@ -66,15 +66,15 @@ class ExerciseViewSet(viewsets.ModelViewSet):
                      'license',
                      'license_author')
 
-    def perform_create(self, serializer):
-        '''
-        Set author and status
-        '''
-        language = load_language()
-        obj = serializer.save(language=language)
-        # Todo is it right to call set author after save?
-        obj.set_author(self.request)
-        obj.save()
+    # def perform_create(self, serializer):
+    #     '''
+    #     Set author and status
+    #     '''
+    #     language = load_language()
+    #     obj = serializer.save(language=language)
+    #     # Todo is it right to call set author after save?
+    #     obj.set_author(self.request)
+    #     obj.save()
 
 
 @api_view(['GET'])
@@ -149,7 +149,7 @@ class ExerciseImageViewSet(viewsets.ModelViewSet):
     '''
     queryset = ExerciseImage.objects.all()
     serializer_class = ExerciseImageSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, CreateOnlyPermission)
+    permission_classes = (ReadOnlyPermission,)
     ordering_fields = '__all__'
     filter_fields = ('is_main',
                      'status',
