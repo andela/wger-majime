@@ -35,7 +35,7 @@ from django.conf import settings
 
 from wger.core.models import Language
 from wger.utils.constants import TWOPLACES
-from wger.utils.cache import cache_mapper
+from wger.utils.cache import cache_mapper, reset_item_nutritional_info, reset_nutrition_result_values, reset_meal_nutritional_info
 from wger.utils.fields import Html5TimeField
 from wger.utils.models import AbstractLicenseModel
 from wger.utils.units import AbstractWeight
@@ -539,6 +539,14 @@ class Meal(models.Model):
         '''
         return u"{0} Meal".format(self.order)
 
+    def delete(self, *args, **kwargs):
+        '''
+        Reset all cached infos
+        '''
+        reset_meal_nutritional_info(self.id)
+        reset_nutrition_result_values(self.plan_id)
+        super(Meal, self).delete(*args, **kwargs)
+
     def get_owner_object(self):
         '''
         Returns the object that has owner information
@@ -563,19 +571,19 @@ class Meal(models.Model):
                                 'sodium': 0}
 
             # Get the calculated values from the meal item and add them
-            for item in self.mealitem_set.select_related():
+        for item in self.mealitem_set.select_related():
 
                 values = item.get_nutritional_values(use_metric=use_metric)
                 for key in nutritional_info.keys():
                     nutritional_info[key] += values[key]
 
             # Only 2 decimal places, anything else doesn't make sense
-            for i in nutritional_info:
-                nutritional_info[i] = Decimal(nutritional_info[i]).quantize(TWOPLACES)
+        for i in nutritional_info:
+            nutritional_info[i] = Decimal(nutritional_info[i]).quantize(TWOPLACES)
 
             #Save to cache
             cache.set(cache_mapper.get_meal_nutritional_info(self.pk), nutritional_info)
-
+        #import pdb; pdb.set_trace()
         return nutritional_info
 
 
@@ -609,6 +617,26 @@ class MealItem(models.Model):
         Return a more human-readable representation
         '''
         return u"{0}g ingredient {1}".format(self.amount, self.ingredient_id)
+
+    def save(self, *args, **kwargs):
+        '''
+        Reset all cached infos
+        '''
+        planId = Meal.objects.get(id=self.meal_id).plan_id
+        reset_nutrition_result_values(planId)
+        reset_item_nutritional_info(self.id)
+        reset_meal_nutritional_info(self.meal_id)
+        super(MealItem, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        '''
+        Reset all cached infos
+        '''
+        planId = Meal.objects.get(id=self.meal_id).plan_id
+        reset_nutrition_result_values(planId)
+        reset_item_nutritional_info(self.id)
+        reset_meal_nutritional_info(self.meal_id)
+        super(MealItem, self).delete(*args, **kwargs)
 
     def get_owner_object(self):
         '''
