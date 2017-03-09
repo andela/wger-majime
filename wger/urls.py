@@ -163,6 +163,9 @@ urlpatterns += [
 
     # API
     url(r'^api/', include(v1_api.urls)),
+    url(r'^api/v2/exercise/info/$',
+        exercises_api_views.info,
+        name='exercise-info'),
     url(r'^api/v2/exercise/search/$',
         exercises_api_views.search,
         name='exercise-search'),

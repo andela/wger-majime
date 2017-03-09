@@ -14,9 +14,9 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Workout Manager.  If not, see <http://www.gnu.org/licenses/>.
-
+import json
 from rest_framework import viewsets
-# from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, api_view
 
@@ -43,7 +43,7 @@ from wger.exercises.models import (
     Muscle
 )
 from wger.utils.language import load_item_languages, load_language
-from wger.utils.permissions import ReadOnlyPermission
+from wger.utils.permissions import CreateOnlyPermission
 
 
 class ExerciseViewSet(viewsets.ModelViewSet):
@@ -52,7 +52,7 @@ class ExerciseViewSet(viewsets.ModelViewSet):
     '''
     queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
-    permission_classes = (ReadOnlyPermission,)
+    permission_classes = (IsAuthenticatedOrReadOnly, CreateOnlyPermission,)
     ordering_fields = '__all__'
     filter_fields = ('category',
                      'creation_date',
@@ -66,16 +66,82 @@ class ExerciseViewSet(viewsets.ModelViewSet):
                      'license',
                      'license_author')
 
-    # def perform_create(self, serializer):
-    #     '''
-    #     Set author and status
-    #     '''
-    #     language = load_language()
-    #     obj = serializer.save(language=language)
-    #     # Todo is it right to call set author after save?
-    #     obj.set_author(self.request)
-    #     obj.save()
+    def perform_create(self, serializer):
+        '''
+        Set author and status
+        '''
+        language = load_language()
+        obj = serializer.save(language=language)
+        # Todo is it right to call set author after save?
+        obj.set_author(self.request)
+        obj.save()
 
+
+@api_view(['GET'])
+def info(request):
+    """It gets all info about an exercise."""
+    """
+
+    you search by the name of the exercise
+    Then through searching, it brings up all information about it
+
+    """
+    q = request.GET.get('term', None)
+    results = []
+    json_response = {}
+
+    if q:
+        languages = load_item_languages(LanguageConfig.SHOW_ITEM_EXERCISES,
+                                        language_code=request.GET.get('language', None))
+        exercise = (Exercise.objects.get(name__icontains=q))
+                    #  .filter(language__in=languages))
+        import pdb;
+        pdb.set_trace()
+
+        # for exercise in exercises:
+        if exercise.main_image:
+            image_obj = exercise.main_image
+            image = image_obj.image.url
+            t = get_thumbnailer(image_obj.image)
+            thumbnail = t.get_thumbnail(aliases.get('micro_cropped')).url
+        else:
+            image = None
+            thumbnail = None
+
+        exercise_json = {
+            'value': exercise.name,
+            'data': {
+                'id': exercise.id,
+                'name': exercise.name,
+                'category': _(exercise.category.name),
+                'image': image,
+                'image_thumbnail': thumbnail,
+                'description': exercise.description,
+                'muscles': (exercise.muscles.name),
+                'muscles_secondary': {
+                    'name': exercise.muscles_secondary.name,
+
+                },
+                'equipment': exercise.equipment.name,
+                }
+            }
+        print(exercise.muscles_secondary)
+        results.append(exercise_json)
+    json_response['information'] = results
+
+    return Response(json_response)
+
+# def info(request, exercise_name):
+#     """It gets all info about an exercise."""
+#     """
+#
+#     you search by the name of the exercise
+#     Then through searching, it brings up all information about it
+#
+#     """
+#     exercise = Exercise.objects.get(name=exercise_name)
+#     serializer = ExerciseSerializer(exercise)
+#     return Response(serializer.data)
 
 @api_view(['GET'])
 def search(request):
@@ -149,7 +215,7 @@ class ExerciseImageViewSet(viewsets.ModelViewSet):
     '''
     queryset = ExerciseImage.objects.all()
     serializer_class = ExerciseImageSerializer
-    permission_classes = (ReadOnlyPermission,)
+    permission_classes = (IsAuthenticatedOrReadOnly, CreateOnlyPermission,)
     ordering_fields = '__all__'
     filter_fields = ('is_main',
                      'status',

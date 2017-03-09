@@ -36,7 +36,7 @@ class WgerPermission(permissions.BasePermission):
         view. If it is not present, treat is as a public endpoint
         '''
         if hasattr(view, 'is_private') and view.is_private:
-            return request.user and request.user.is_authenticated()
+            return request.user
         return True
 
     def has_object_permission(self, request, view, obj):
@@ -57,31 +57,19 @@ class WgerPermission(permissions.BasePermission):
         return False
 
 
-# class CreateOnlyPermission(permissions.BasePermission):
-#     '''
-#     Custom permission that permits read access the resource but limits the
-#     write operations to creating (POSTing) new objects only and does not
-#     allow allow editing them. This is currently used for exercises and their
-#     images.
-#     '''
-#
-#     def has_permission(self, request, view):
-#         return (request.method in ['GET', 'HEAD', 'OPTIONS'] or
-#                 (request.user and
-#                  request.user.is_authenticated() and
-#                  request.method == 'POST'))
-
-class ReadOnlyPermission(permissions.BasePermission):
+class CreateOnlyPermission(permissions.BasePermission):
     '''
-    Custom permission that permits read access the resource.
-    This is currently used for exercises and their images.
+    Custom permission that permits read access the resource but limits the
+    write operations to creating (POSTing) new objects only and does not
+    allow allow editing them. This is currently used for exercises and their
+    images.
     '''
 
     def has_permission(self, request, view):
         return (request.method in ['GET', 'HEAD', 'OPTIONS'] or
                 (request.user and
                  request.user.is_authenticated() and
-                 request.method == 'GET'))
+                 request.method == 'POST'))
 
 
 class UpdateOnlyPermission(permissions.BasePermission):
