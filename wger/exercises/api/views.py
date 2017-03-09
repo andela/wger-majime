@@ -95,8 +95,9 @@ def info(request):
                                         language_code=request.GET.get('language', None))
         exercise = (Exercise.objects.get(name__icontains=q))
                     #  .filter(language__in=languages))
-        import pdb;
-        pdb.set_trace()
+        muscles_name = []
+        for muscles in exercise.muscles_secondary.all():
+            muscles_name.append(muscles.name)
 
         # for exercise in exercises:
         if exercise.main_image:
@@ -107,7 +108,6 @@ def info(request):
         else:
             image = None
             thumbnail = None
-
         exercise_json = {
             'value': exercise.name,
             'data': {
@@ -117,14 +117,11 @@ def info(request):
                 'image': image,
                 'image_thumbnail': thumbnail,
                 'description': exercise.description,
-                'muscles': (exercise.muscles.name),
-                'muscles_secondary': {
-                    'name': exercise.muscles_secondary.name,
-
-                },
-                'equipment': exercise.equipment.name,
-                }
+                'muscles': [muscles.name for muscles in exercise.muscles.all()],
+                'muscles_secondary': [muscles.name for muscles in exercise.muscles_secondary.all()],
+                'equipment': [equipment.name for equipment in exercise.equipment.all()],
             }
+        }
         print(exercise.muscles_secondary)
         results.append(exercise_json)
     json_response['information'] = results
