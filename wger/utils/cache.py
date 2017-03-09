@@ -42,6 +42,8 @@ def delete_template_fragment_cache(fragment_name='', *args):
 def reset_workout_canonical_form(workout_id):
     cache.delete(cache_mapper.get_workout_canonical(workout_id))
 
+def reset_nutrition_result_values(plan_id):
+    cache.delete(cache_mapper.get_nutrition_result_values(plan_id))
 
 def reset_workout_log(user_pk, year, month, day=None):
     '''
@@ -66,8 +68,6 @@ class CacheKeyMapper(object):
     EXERCISE_CACHE_KEY_MUSCLE_BG = 'exercise-muscle-bg-{0}'
     INGREDIENT_CACHE_KEY = 'ingredient-{0}'
     NUTRITION_RESULT_VALUES = 'nutrition-result-values-{0}'
-    ITEM_NUTRITIONAL_INFO = 'item-nutritional-info-{0}'
-    MEAL_NUTRITIONAL_INFO = 'meal-nutritional-info-{0}'
     WORKOUT_CANONICAL_REPRESENTATION = 'workout-canonical-representation-{0}'
     WORKOUT_LOG_LIST = 'workout-log-hash-{0}'
 
@@ -117,18 +117,6 @@ class CacheKeyMapper(object):
         Return the result dict of NutritionPlan
         '''
         return self.NUTRITION_RESULT_VALUES.format(self.get_pk(param))
-
-    def get_item_nutritional_info(self, param):
-        '''
-        Return the nutritional_info dict of MealItem
-        '''
-        return self.ITEM_NUTRITIONAL_INFO.format(self.get_pk(param))
-
-    def get_meal_nutritional_info(self, param):
-        '''
-        Return the nutritional_info dict of Meal
-        '''
-        return self.MEAL_NUTRITIONAL_INFO.format(self.get_pk(param))
 
     def get_workout_log_list(self, hash_value):
         '''
