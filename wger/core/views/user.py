@@ -24,7 +24,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import (LoginRequiredMixin,
                                         PermissionRequiredMixin)
-from django.contrib.auth.models import User as Django_User
+from django.contrib.auth.models import User as Django_User, User
 from django.contrib.auth.views import login as django_loginview
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseForbidden, HttpResponseRedirect
