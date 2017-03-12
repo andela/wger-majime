@@ -143,6 +143,7 @@ class IngredientMixin(WgerFormMixin):
               'fibres',
               'sodium',
               'license',
+              'language',
               'license_author']
 
 
@@ -188,7 +189,7 @@ class IngredientCreateView(IngredientMixin, CreateView):
                              message,
                              fail_silently=True)
 
-        form.instance.language = load_language()
+        form.instance.language = load_language(form.instance.language.short_name)
         return super(IngredientCreateView, self).form_valid(form)
 
     def dispatch(self, request, *args, **kwargs):
