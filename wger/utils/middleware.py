@@ -124,7 +124,8 @@ class JavascriptAJAXRedirectionMiddleware(object):
         return response
 
 
-class SocialAuthExceptionMiddleware(SocialAuthExceptionMiddleware):
+class CustomSocialAuthExceptionMiddleware(SocialAuthExceptionMiddleware):
+
     def process_exception(self, request, exception):
         if hasattr(social_exceptions, 'AuthCanceled'):
             return redirect("/user/login")

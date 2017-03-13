@@ -148,7 +148,7 @@ MIDDLEWARE_CLASSES = (
     'django_mobile.middleware.SetFlavourMiddleware',
     #social authentication
     'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
-    'wger.utils.middleware.SocialAuthExceptionMiddleware',
+    'wger.utils.middleware.CustomSocialAuthExceptionMiddleware',
 )
 
 AUTHENTICATION_BACKENDS = (
