@@ -488,6 +488,7 @@ class UserListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = User
     permission_required = ('gym.manage_gyms',)
     template_name = 'user/list.html'
+    active_map = {"/en/user/list": True, "/en/user/list/inactive": False}
 
     def get_queryset(self):
         '''
@@ -497,12 +498,10 @@ class UserListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
                'members': []}
 
         for u in User.objects.select_related('usercache', 'userprofile__gym')\
-                .filter(is_active=True
-                        if self.request.get_full_path() == "/en/user/list"
-                        else False):
+                .filter(is_active=
+                        UserListView.active_map[self.request.get_full_path()]):
             out['members'].append({'obj': u,
                                    'last_log': u.usercache.last_activity})
-
         return out
 
     def get_context_data(self, **kwargs):
@@ -517,6 +516,6 @@ class UserListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
                                           _('Last activity'),
                                           _('Gym')],
                                  'users': context['object_list']['members']}
-        context['show_active'] = True \
-            if self.request.get_full_path() == "/en/user/list" else False
+        context['show_active'] = UserListView.active_map[self.request
+                                                             .get_full_path()]
         return context
