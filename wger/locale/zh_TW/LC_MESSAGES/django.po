@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Armstrong Yan <yanqiangsdu@gmail.com>, 2015
 msgid ""
@@ -4336,4 +4336,13 @@ msgid "Trapezius"
 msgstr ""
 
 msgid "Triceps brachii"
+msgstr ""
+
+msgid "Forearms"
+msgstr ""
+
+msgid "Posterious deltoid"
+msgstr ""
+
+msgid "Lateral deltoid"
 msgstr ""

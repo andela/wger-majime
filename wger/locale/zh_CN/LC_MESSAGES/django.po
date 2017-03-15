@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Armstrong Yan <yanqiangsdu@gmail.com>, 2016
 # rge <roland@geider.net>, 2016
@@ -4338,3 +4338,12 @@ msgstr ""
 
 msgid "Triceps brachii"
 msgstr ""
+
+msgid "Forearms"
+msgstr "前臂"
+
+msgid "Posterious deltoid"
+msgstr "后三角形"
+
+msgid "Lateral deltoid"
+msgstr "侧向三角形"

@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Hisashi Miura <racchie@gmail.com>, 2015
 # Sako Eaton <sako.eaton@gmail.com>, 2015
@@ -4338,3 +4338,12 @@ msgstr "僧帽筋"
 
 msgid "Triceps brachii"
 msgstr "上腕三頭筋"
+
+msgid "Forearms"
+msgstr "前腕"
+
+msgid "Posterious deltoid"
+msgstr "奇妙な三角"
+
+msgid "Lateral deltoid"
+msgstr "横方向三角"
