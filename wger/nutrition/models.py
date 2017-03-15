@@ -20,7 +20,8 @@ from decimal import Decimal
 from django.db import models
 
 from django.template.loader import render_to_string
-from django.template.defaultfilters import slugify  # django.utils.text.slugify in django 1.5!
+# django.utils.text.slugify in django 1.5!
+from django.template.defaultfilters import slugify
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -35,7 +36,7 @@ from django.conf import settings
 
 from wger.core.models import Language
 from wger.utils.constants import TWOPLACES
-from wger.utils.cache import cache_mapper
+from wger.utils.cache import cache_mapper, reset_nutrition_result_values
 from wger.utils.fields import Html5TimeField
 from wger.utils.models import AbstractLicenseModel
 from wger.utils.units import AbstractWeight
@@ -60,9 +61,7 @@ logger = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class NutritionPlan(models.Model):
-    '''
-    A nutrition plan
-    '''
+    """A nutrition plan."""
 
     # Metaclass to set some other properties
     class Meta:
@@ -109,48 +108,53 @@ class NutritionPlan(models.Model):
         '''
         Sums the nutritional info of all items in the plan
         '''
-        use_metric = self.user.userprofile.use_metric
-        unit = 'kg' if use_metric else 'lb'
-        result = {'total': {'energy': 0,
-                            'protein': 0,
-                            'carbohydrates': 0,
-                            'carbohydrates_sugar': 0,
-                            'fat': 0,
-                            'fat_saturated': 0,
-                            'fibres': 0,
-                            'sodium': 0},
-                  'percent': {'protein': 0,
-                              'carbohydrates': 0,
-                              'fat': 0},
-                  'per_kg': {'protein': 0,
-                             'carbohydrates': 0,
-                             'fat': 0},
-                  }
+        result = cache.get(cache_mapper.get_nutrition_result_values(self.pk))
+        if not result:
+            use_metric = self.user.userprofile.use_metric
+            unit = 'kg' if use_metric else 'lb'
+            result = {'total': {'energy': 0,
+                                'protein': 0,
+                                'carbohydrates': 0,
+                                'carbohydrates_sugar': 0,
+                                'fat': 0,
+                                'fat_saturated': 0,
+                                'fibres': 0,
+                                'sodium': 0},
+                      'percent': {'protein': 0,
+                                  'carbohydrates': 0,
+                                  'fat': 0},
+                      'per_kg': {'protein': 0,
+                                 'carbohydrates': 0,
+                                 'fat': 0},
+                      }
 
-        # Energy
-        for meal in self.meal_set.select_related():
-            values = meal.get_nutritional_values(use_metric=use_metric)
-            for key in result['total'].keys():
-                result['total'][key] += values[key]
+            # Energy
+            for meal in self.meal_set.select_related():
+                values = meal.get_nutritional_values(use_metric=use_metric)
+                for key in result['total'].keys():
+                    result['total'][key] += values[key]
 
-        energy = result['total']['energy']
+            energy = result['total']['energy']
 
-        # In percent
-        if energy:
-            for key in result['percent'].keys():
-                result['percent'][key] = \
-                    result['total'][key] * ENERGY_FACTOR[key][unit] / energy * 100
+            # In percent
+            if energy:
+                for key in result['percent'].keys():
+                    result['percent'][key] = \
+                        result['total'][key] * ENERGY_FACTOR[key][unit] / energy * 100
 
-        # Per body weight
-        weight_entry = self.get_closest_weight_entry()
-        if weight_entry:
-            for key in result['per_kg'].keys():
-                result['per_kg'][key] = result['total'][key] / weight_entry.weight
+            # Per body weight
+            weight_entry = self.get_closest_weight_entry()
+            if weight_entry:
+                for key in result['per_kg'].keys():
+                    result['per_kg'][key] = result['total'][key] / weight_entry.weight
 
-        # Only 2 decimal places, anything else doesn't make sense
-        for key in result.keys():
-            for i in result[key]:
-                result[key][i] = Decimal(result[key][i]).quantize(TWOPLACES)
+            # Only 2 decimal places, anything else doesn't make sense
+            for key in result.keys():
+                for i in result[key]:
+                    result[key][i] = Decimal(result[key][i]).quantize(TWOPLACES)
+
+            #save to cache
+            cache.set(cache_mapper.get_nutrition_result_values(self.pk), result)
 
         return result
 
@@ -534,6 +538,13 @@ class Meal(models.Model):
         '''
         return u"{0} Meal".format(self.order)
 
+    def delete(self, *args, **kwargs):
+        '''
+        Reset all cached infos
+        '''
+        reset_nutrition_result_values(self.plan_id)
+        super(Meal, self).delete(*args, **kwargs)
+
     def get_owner_object(self):
         '''
         Returns the object that has owner information
@@ -599,6 +610,22 @@ class MealItem(models.Model):
         Return a more human-readable representation
         '''
         return u"{0}g ingredient {1}".format(self.amount, self.ingredient_id)
+
+    def save(self, *args, **kwargs):
+        '''
+        Reset all cached infos
+        '''
+        planId = Meal.objects.get(id=self.meal_id).plan_id
+        reset_nutrition_result_values(planId)
+        super(MealItem, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        '''
+        Reset all cached infos
+        '''
+        planId = Meal.objects.get(id=self.meal_id).plan_id
+        reset_nutrition_result_values(planId)
+        super(MealItem, self).delete(*args, **kwargs)
 
     def get_owner_object(self):
         '''
